@@ -14,7 +14,7 @@ export const CreateTodo = async (todo:ToDoList)=>{
         return response;  // Return response data
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
-          throw new Error(error.response?.data?.message || "Failed to create ToDo");
+          throw new Error(error.response?.data || "Failed to create ToDo");
         } else {
           throw new Error("An unexpected error occurred");
         }
@@ -30,7 +30,8 @@ export const GetTodo = async ()=>{
       return response;  // Return response data
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "Failed to fetch ToDo");
+        console.log(error);
+        throw new Error(error.response?.data || "Failed to fetch ToDo");
       } else {
         throw new Error("An unexpected error occurred");
       }
@@ -46,7 +47,7 @@ export const UpdateTodo = async (todo:ToDoList)=>{
       return response;  // Return response data
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "Failed to Update ToDo");
+        throw new Error(error.response?.data || "Failed to Update ToDo");
       } else {
         throw new Error("An unexpected error occurred");
       }
@@ -63,7 +64,7 @@ export const DeleteTodo = async (id:number)=>{
       return response;  // Return response data
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || "Failed to delete ToDo");
+        throw new Error(error.response?.data || "Failed to delete ToDo");
       } else {
         throw new Error("An unexpected error occurred");
       }

@@ -39,7 +39,7 @@ const TodoList = () => {
           } catch (error:any) {
               setErrorMessage(error.message)
           }
-        } 
+        }   
         fetchData()
 
       },[])
@@ -117,8 +117,11 @@ const TodoList = () => {
           
           const result = await DeleteTodo(data.id);
           if (result.status === 200) {
+            console.log(result.data);
+            console.log(transformApiResponseToToDoList(result.data))
+            
             setTodoList(transformApiResponseToToDoList(result.data))
-            setFormData(initialFormData);
+            
             setSuccessMessage('Deleted Successfully!');
               SetLoading(false);
             
