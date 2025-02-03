@@ -1,13 +1,14 @@
-import { Alert, Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, CircularProgress, Typography } from '@mui/material'
 import { DataGrid, GridCellEditCommitParams, gridClasses, GridColDef } from '@mui/x-data-grid'
-import { Category, initialFormData, Priority, ToDoList, transformApiResponseToToDoList } from '../types/todo'
+import { Category, Priority, ToDoList, transformApiResponseToToDoList } from '../types/todo'
 import { useEffect, useState } from 'react';
 import { grey } from '@mui/material/colors';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { UpdateAction } from '../components/UpdateAction';
-import CloseIcon from "@mui/icons-material/Close";
+
 import { useNavigate } from 'react-router-dom';
-import { CreateTodo, DeleteTodo, GetTodo } from '../services/TodoService';
+import {  DeleteTodo, GetTodo } from '../services/TodoService';
+import Create from '../components/Create';
 
 
 
@@ -16,7 +17,6 @@ const TodoList = () => {
     const [open,openchange]=useState(false);
       const [loading,SetLoading] = useState(false);
       const [rowId,setRowId] = useState<number| null>(null);
-      const [formData, setFormData] = useState<ToDoList>(initialFormData);
       const [todoList, setTodoList] = useState<ToDoList[]>([]);
       const [errorMessage, setErrorMessage] = useState<string|null>(null);
    const [successMessage, setSuccessMessage] = useState<string|null>(null);
@@ -43,13 +43,7 @@ const TodoList = () => {
         fetchData()
 
       },[])
-      const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-      };
+     
 
       const todoListColumns: GridColDef[] = [
        
@@ -141,25 +135,7 @@ const TodoList = () => {
         localStorage.clear();
         navigate('/login');
     }
-    const handleCreate = async () => {
-      console.log("Submitted Data:", formData);
-      try {
-        // Call RegisterService and handle success
-        const result = await CreateTodo(formData);
-        if (result.status === 200) {
-          setTodoList(transformApiResponseToToDoList(result.data))
-          setFormData(initialFormData);
-        // Redirect or do something on success, e.g., navigate to login page
-      } 
-      openchange(false);
-   // setCount(prev=> prev+1);
-    setSuccessMessage('Successfully Created!!!')
-  }catch (error: any) {
-    console.log(error);
-      setErrorMessage(error.message);
-    }
-      openchange(false);
-    };
+   
   return (
    <>
    {errorMessage && (
@@ -170,61 +146,7 @@ const TodoList = () => {
         <Alert severity="success" onClose={()=>setSuccessMessage(null)}>
           {successMessage}
         </Alert>)}
-   <Dialog open={open} onClose={()=>openchange(false)} fullWidth maxWidth="md">
-        <DialogTitle>
-          Create TodoList  
-          <IconButton onClick={()=> openchange(false)} style={{ float: "right" }}>
-            <CloseIcon color="primary" />
-          </IconButton>  
-        </DialogTitle>
-
-        <DialogContent>
-          <Stack spacing={3} margin={3}>
-            <TextField
-              label="Todo"
-              name="Message"
-              value={formData.Message}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            />
-
-            <TextField
-              select
-              label="Priority"
-              name="Priority"
-              value={formData.Priority}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            >
-              {Object.values(Priority).map((option) => (
-                <MenuItem key={option} value={option}>{option}</MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              select
-              label="Category"
-              name="Category"
-              value={formData.Category}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-            >
-              {Object.values(Category).map((option) => (
-                <MenuItem key={option} value={option}>{option}</MenuItem>
-              ))}
-            </TextField>
-          </Stack>
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={handleCreate} color="primary" variant="contained">Submit</Button>
-          <Button onClick={()=> openchange(false)} color="error" variant="contained">Close</Button>
-        </DialogActions>
-      </Dialog>
-
+   <Create {...{setTodoList,setSuccessMessage,setErrorMessage,open,openchange}}/>
    <Box
      sx={{
       height: "72vh",
